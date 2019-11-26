@@ -5,7 +5,7 @@
  * - All: local and national services sections, not including the user areas of interest
  *
  * A 'loading component' is displayed (hiding the tabs content) if:
- * - visible servcices are loading, or
+ * - visible services are loading, or
  * - userMetadata are loading
  *
  * An 'error component' is displayed (hiding the tabs content) if:
@@ -113,6 +113,7 @@ type State = {
   enableServices: boolean;
   toastErrorMessage: string;
   isInnerContentRendered: boolean;
+  isUpdating: boolean;
 };
 
 type DataLoadFailure =
@@ -202,7 +203,8 @@ class ServicesHomeScreen extends React.Component<Props, State> {
       isLongPressEnabled: false,
       enableServices: false,
       toastErrorMessage: EMPTY_MESSAGE,
-      isInnerContentRendered: false
+      isInnerContentRendered: false,
+      isUpdating: false
     };
   }
 
@@ -342,7 +344,11 @@ class ServicesHomeScreen extends React.Component<Props, State> {
       }
     }
 
-    if (!prevState.enableHeaderAnimation && !this.props.isLoadingServices) {
+    if (
+      !prevState.enableHeaderAnimation &&
+      !this.props.isLoadingServices &&
+      !this.state.isUpdating
+    ) {
       this.setState({ enableHeaderAnimation: true });
     }
   }
@@ -636,7 +642,14 @@ class ServicesHomeScreen extends React.Component<Props, State> {
           <ServicesTab
             isLocal={true}
             sections={localTabSections}
+            setUpdating={(isUpdating: boolean) => {
+              this.setState({
+                isUpdating,
+                enableHeaderAnimation: !isUpdating
+              });
+            }}
             isRefreshing={
+              this.state.isUpdating ||
               isLoadingServices ||
               pot.isLoading(potUserMetadata) ||
               pot.isUpdating(potUserMetadata)

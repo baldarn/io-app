@@ -7,7 +7,12 @@ import I18n from "i18n-js";
 import * as pot from "italia-ts-commons/lib/pot";
 import * as React from "react";
 import { createFactory } from "react";
-import { Animated, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Animated,
+  StyleSheet,
+  TouchableOpacity,
+  SectionList
+} from "react-native";
 import { connect } from "react-redux";
 import { Dispatch } from "redux";
 import { ServicePublic } from "../../../definitions/backend/ServicePublic";
@@ -49,6 +54,7 @@ type OwnProps = Readonly<{
   ) => void;
   onItemSwitchValueChanged: (service: ServicePublic, value: boolean) => void;
   tabOffset: Animated.Value;
+  setUpdating?: (isUpdating: boolean) => void;
 }>;
 
 type Props = OwnProps &
@@ -90,9 +96,12 @@ class ServicesTab extends React.PureComponent<Props> {
     const {
       selectableOrganizations,
       hideModal,
-      selectedOrganizations
+      selectedOrganizations,
+      setUpdating
     } = this.props;
-
+    if (setUpdating) {
+      setUpdating(true);
+    }
     this.props.showModal(
       <OrganizationsList
         items={selectableOrganizations}
@@ -100,7 +109,12 @@ class ServicesTab extends React.PureComponent<Props> {
         keyExtractor={(item: Organization) => item.fiscalCode}
         itemTitleExtractor={(item: Organization) => item.name}
         itemIconComponent={left(renderOrganizationLogo)}
-        onCancel={hideModal}
+        onCancel={() => {
+          hideModal();
+          if (setUpdating) {
+            setUpdating(false);
+          }
+        }}
         onSave={this.onSaveAreasOfInterest}
         isRefreshEnabled={false}
         matchingTextPredicate={organizationContainsText}
@@ -120,8 +134,13 @@ class ServicesTab extends React.PureComponent<Props> {
       this.props.updateOrganizationsOfInterestMetadata(selectedFiscalCodes);
     }
     this.props.hideModal();
+
+    if (this.props.setUpdating) {
+      this.props.setUpdating(false);
+    }
   };
 
+  // Call to delete a section
   private onPressItem = (section: ServicesSectionState) => {
     if (this.props.userMetadata && this.props.selectedOrganizations) {
       if (this.props.updateToast) {
@@ -189,7 +208,11 @@ class ServicesTab extends React.PureComponent<Props> {
         onLongPressItem={this.props.handleOnLongPressItem}
         isLongPressEnabled={this.props.isLongPressEnabled}
         onItemSwitchValueChanged={this.props.onItemSwitchValueChanged}
-        animated={this.onTabScroll(this.props.tabOffset)}
+        animated={
+          this.props.isRefreshing
+            ? undefined
+            : this.onTabScroll(this.props.tabOffset)
+        }
         renderRightIcon={
           this.props.isLocal ? this.renderLocalQuickSectionDeletion : undefined
         }
