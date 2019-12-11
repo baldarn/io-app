@@ -684,14 +684,10 @@ class ServicesHomeScreen extends React.Component<Props, State> {
             isLocal={true}
             sections={localTabSections}
             isButtonUpdating={this.state.isButtonUpdating}
-            setButtonUpdating={(isButtonUpdating: boolean) => {
-              this.setState({
-                isButtonUpdating
-              });
-            }}
             setUpdating={(isUpdating: boolean) => {
               this.setState({
                 isUpdating,
+                isButtonUpdating: isUpdating,
                 enableHeaderAnimation: !isUpdating
               });
             }}

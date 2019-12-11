@@ -51,7 +51,6 @@ type OwnProps = Readonly<{
   tabOffset: Animated.Value;
   setUpdating?: (isUpdating: boolean) => void;
   isButtonUpdating?: boolean;
-  setButtonUpdating?: (isButtonUpdating: boolean) => void;
 }>;
 
 type Props = OwnProps &
@@ -95,11 +94,9 @@ class ServicesTab extends React.PureComponent<Props> {
       selectableOrganizations,
       hideModal,
       selectedOrganizations,
-      setUpdating,
-      setButtonUpdating
+      setUpdating
     } = this.props;
-    if (setUpdating && setButtonUpdating) {
-      setButtonUpdating(true);
+    if (setUpdating) {
       setUpdating(true);
     }
     this.props.showModal(
@@ -111,8 +108,7 @@ class ServicesTab extends React.PureComponent<Props> {
         itemIconComponent={left(renderOrganizationLogo)}
         onCancel={() => {
           hideModal();
-          if (setUpdating && setButtonUpdating) {
-            setButtonUpdating(false);
+          if (setUpdating) {
             setUpdating(false);
           }
         }}
@@ -136,10 +132,8 @@ class ServicesTab extends React.PureComponent<Props> {
       // Show only the refresh control and not show activity indicator
       prevProps.sections.length === 0 &&
       this.props.sections.length > 0 &&
-      this.props.setButtonUpdating &&
       this.props.setUpdating
     ) {
-      this.props.setButtonUpdating(false);
       this.props.setUpdating(false);
     }
   }
@@ -157,8 +151,7 @@ class ServicesTab extends React.PureComponent<Props> {
 
     // tslint:disable-next-line: no-object-mutation
     this.idTimeoutAnim = setTimeout(() => {
-      if (this.props.setUpdating && this.props.setButtonUpdating) {
-        this.props.setButtonUpdating(false);
+      if (this.props.setUpdating) {
         this.props.setUpdating(false);
       }
     }, 1000);
@@ -166,8 +159,7 @@ class ServicesTab extends React.PureComponent<Props> {
 
   // Call to delete a section
   private onPressItem = (section: ServicesSectionState) => {
-    if (this.props.setUpdating && this.props.setButtonUpdating) {
-      this.props.setButtonUpdating(true);
+    if (this.props.setUpdating) {
       this.props.setUpdating(true);
     }
     if (this.props.userMetadata && this.props.selectedOrganizations) {
@@ -184,8 +176,7 @@ class ServicesTab extends React.PureComponent<Props> {
     }
     // tslint:disable-next-line: no-identical-functions no-object-mutation
     this.idTimeoutAnim = setTimeout(() => {
-      if (this.props.setUpdating && this.props.setButtonUpdating) {
-        this.props.setButtonUpdating(false);
+      if (this.props.setUpdating) {
         this.props.setUpdating(false);
       }
     }, 1000);
