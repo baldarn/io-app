@@ -50,6 +50,8 @@ type OwnProps = Readonly<{
   onItemSwitchValueChanged: (service: ServicePublic, value: boolean) => void;
   tabOffset: Animated.Value;
   setUpdating?: (isUpdating: boolean) => void;
+  isButtonUpdating?: boolean;
+  setButtonUpdating?: (isButtonUpdating: boolean) => void;
 }>;
 
 type Props = OwnProps &
@@ -92,9 +94,11 @@ class ServicesTab extends React.PureComponent<Props> {
       selectableOrganizations,
       hideModal,
       selectedOrganizations,
-      setUpdating
+      setUpdating,
+      setButtonUpdating
     } = this.props;
-    if (setUpdating) {
+    if (setUpdating && setButtonUpdating) {
+      setButtonUpdating(true);
       setUpdating(true);
     }
     this.props.showModal(
@@ -106,7 +110,8 @@ class ServicesTab extends React.PureComponent<Props> {
         itemIconComponent={left(renderOrganizationLogo)}
         onCancel={() => {
           hideModal();
-          if (setUpdating) {
+          if (setUpdating && setButtonUpdating) {
+            setButtonUpdating(false);
             setUpdating(false);
           }
         }}
@@ -130,13 +135,20 @@ class ServicesTab extends React.PureComponent<Props> {
     }
     this.props.hideModal();
 
-    if (this.props.setUpdating) {
-      this.props.setUpdating(false);
-    }
+    setTimeout(() => {
+      if (this.props.setUpdating && this.props.setButtonUpdating) {
+        this.props.setButtonUpdating(false);
+        this.props.setUpdating(false);
+      }
+    }, 1000);
   };
 
   // Call to delete a section
   private onPressItem = (section: ServicesSectionState) => {
+    if (this.props.setUpdating && this.props.setButtonUpdating) {
+      this.props.setButtonUpdating(true);
+      this.props.setUpdating(true);
+    }
     if (this.props.userMetadata && this.props.selectedOrganizations) {
       if (this.props.updateToast) {
         this.props.updateToast();
@@ -149,6 +161,12 @@ class ServicesTab extends React.PureComponent<Props> {
         updatedAreasOfInterest
       );
     }
+    setTimeout(() => {
+      if (this.props.setUpdating && this.props.setButtonUpdating) {
+        this.props.setButtonUpdating(false);
+        this.props.setUpdating(false);
+      }
+    }, 1000);
   };
 
   private renderLocalQuickSectionDeletion = (section: ServicesSectionState) => {
@@ -188,6 +206,7 @@ class ServicesTab extends React.PureComponent<Props> {
         isLocal={this.props.isLocal}
         sections={this.props.sections}
         profile={this.props.profile}
+        isButtonUpdating={this.props.isButtonUpdating}
         isRefreshing={this.props.isRefreshing}
         onRefresh={this.props.onRefresh}
         onSelect={this.props.onServiceSelect}

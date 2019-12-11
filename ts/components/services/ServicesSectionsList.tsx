@@ -4,7 +4,13 @@
 import I18n from "i18n-js";
 import { Button, Text, View } from "native-base";
 import React from "react";
-import { Image, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Platform
+} from "react-native";
 import { StyleSheet } from "react-native";
 import { ServicePublic } from "../../../definitions/backend/ServicePublic";
 import { ServicesSectionState } from "../../store/reducers/entities/services";
@@ -35,6 +41,7 @@ type OwnProps = {
   onRefresh: () => void;
   onSelect: (service: ServicePublic) => void;
   readServices: ReadStateByServicesId;
+  isButtonUpdating?: boolean;
 };
 
 type Props = AnimatedProps & OwnProps;
@@ -58,6 +65,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingTop: 0,
+    paddingBottom: 0
+  },
+  progress: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 12,
     paddingBottom: 0
   },
   textButton: {
@@ -118,26 +131,80 @@ class ServicesSectionsList extends React.PureComponent<Props> {
   }
 
   private renderEditButton = () => {
-    return (
-      this.props.isLocal &&
-      this.props.selectedOrganizationsFiscalCodes &&
-      this.props.selectedOrganizationsFiscalCodes.size > 0 && (
-        <View style={styles.headerContentWrapper}>
-          <Button
-            small={true}
-            primary={!this.props.isLongPressEnabled}
-            style={styles.button}
-            block={true}
-            onPress={this.props.onChooserAreasOfInterestPress}
-            disabled={this.props.isRefreshing || this.props.isLongPressEnabled}
-          >
-            <Text style={styles.textButton}>
-              {I18n.t("services.areasOfInterest.editButton")}
-            </Text>
-          </Button>
-        </View>
-      )
-    );
+    if (Platform.OS === "ios") {
+      if (
+        (this.props.isRefreshing && !this.props.isButtonUpdating) ||
+        (this.props.isLongPressEnabled && !this.props.isButtonUpdating)
+      ) {
+        return (
+          <View style={styles.headerContentWrapper}>
+            <Button
+              small={true}
+              primary={!this.props.isLongPressEnabled}
+              style={styles.button}
+              block={true}
+              disabled={true}
+            >
+              <Text style={styles.textButton}>
+                {I18n.t("services.areasOfInterest.editButton")}
+              </Text>
+            </Button>
+          </View>
+        );
+      } else if (this.props.isRefreshing || this.props.isLongPressEnabled) {
+        return (
+          this.props.selectedOrganizationsFiscalCodes &&
+          this.props.selectedOrganizationsFiscalCodes.size > 0 && (
+            <ActivityIndicator
+              style={styles.progress}
+              size="small"
+              color={customVariables.brandDarkGray}
+            />
+          )
+        );
+      } else {
+        return (
+          this.props.selectedOrganizationsFiscalCodes &&
+          this.props.selectedOrganizationsFiscalCodes.size > 0 && (
+            <View style={styles.headerContentWrapper}>
+              <Button
+                small={true}
+                primary={!this.props.isLongPressEnabled}
+                style={styles.button}
+                block={true}
+                onPress={this.props.onChooserAreasOfInterestPress}
+              >
+                <Text style={styles.textButton}>
+                  {I18n.t("services.areasOfInterest.editButton")}
+                </Text>
+              </Button>
+            </View>
+          )
+        );
+      }
+    } else {
+      return (
+        this.props.selectedOrganizationsFiscalCodes &&
+        this.props.selectedOrganizationsFiscalCodes.size > 0 && (
+          <View style={styles.headerContentWrapper}>
+            <Button
+              small={true}
+              primary={!this.props.isLongPressEnabled}
+              style={styles.button}
+              block={true}
+              onPress={this.props.onChooserAreasOfInterestPress}
+              disabled={
+                this.props.isRefreshing || this.props.isLongPressEnabled
+              }
+            >
+              <Text style={styles.textButton}>
+                {I18n.t("services.areasOfInterest.editButton")}
+              </Text>
+            </Button>
+          </View>
+        )
+      );
+    }
   };
 
   private renderList = () => {

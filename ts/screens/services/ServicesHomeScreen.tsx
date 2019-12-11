@@ -121,6 +121,7 @@ type State = {
   toastErrorMessage: string;
   isInnerContentRendered: boolean;
   isUpdating: boolean;
+  isButtonUpdating: boolean;
 };
 
 type DataLoadFailure =
@@ -218,7 +219,8 @@ class ServicesHomeScreen extends React.Component<Props, State> {
       enableServices: false,
       toastErrorMessage: EMPTY_MESSAGE,
       isInnerContentRendered: false,
-      isUpdating: false
+      isUpdating: false,
+      isButtonUpdating: false
     };
   }
 
@@ -633,24 +635,26 @@ class ServicesHomeScreen extends React.Component<Props, State> {
             transform: [
               {
                 // enableHeaderAnimation is used to avoid unwanted refresh of
-                // animation
-                translateY: this.state.enableHeaderAnimation
-                  ? this.animatedScrollPositions[
-                      this.state.currentTab
-                    ].interpolate({
-                      inputRange: [
-                        0,
-                        SCROLL_RANGE_FOR_ANIMATION / 2,
-                        SCROLL_RANGE_FOR_ANIMATION
-                      ],
-                      outputRange: [
-                        SCROLL_RANGE_FOR_ANIMATION,
-                        SCROLL_RANGE_FOR_ANIMATION / 4,
-                        0
-                      ],
-                      extrapolate: "clamp"
-                    })
-                  : SCROLL_RANGE_FOR_ANIMATION
+                // animation and not in updating
+                translateY:
+                  this.state.enableHeaderAnimation &&
+                  !this.state.isButtonUpdating
+                    ? this.animatedScrollPositions[
+                        this.state.currentTab
+                      ].interpolate({
+                        inputRange: [
+                          0,
+                          SCROLL_RANGE_FOR_ANIMATION / 2,
+                          SCROLL_RANGE_FOR_ANIMATION
+                        ],
+                        outputRange: [
+                          SCROLL_RANGE_FOR_ANIMATION,
+                          SCROLL_RANGE_FOR_ANIMATION / 4,
+                          0
+                        ],
+                        extrapolate: "clamp"
+                      })
+                    : SCROLL_RANGE_FOR_ANIMATION
               }
             ]
           }
@@ -664,6 +668,12 @@ class ServicesHomeScreen extends React.Component<Props, State> {
           <ServicesTab
             isLocal={true}
             sections={localTabSections}
+            isButtonUpdating={this.state.isButtonUpdating}
+            setButtonUpdating={(isButtonUpdating: boolean) => {
+              this.setState({
+                isButtonUpdating
+              });
+            }}
             setUpdating={(isUpdating: boolean) => {
               this.setState({
                 isUpdating,
