@@ -653,25 +653,23 @@ class ServicesHomeScreen extends React.Component<Props, State> {
               {
                 // enableHeaderAnimation is used to avoid unwanted refresh of
                 // animation and not in updating
-                translateY:
-                  this.state.enableHeaderAnimation &&
-                  !this.state.isButtonUpdating
-                    ? this.animatedScrollPositions[
-                        this.state.currentTab
-                      ].interpolate({
-                        inputRange: [
-                          0,
-                          SCROLL_RANGE_FOR_ANIMATION / 2,
-                          SCROLL_RANGE_FOR_ANIMATION
-                        ],
-                        outputRange: [
-                          SCROLL_RANGE_FOR_ANIMATION,
-                          SCROLL_RANGE_FOR_ANIMATION / 4,
-                          0
-                        ],
-                        extrapolate: "clamp"
-                      })
-                    : SCROLL_RANGE_FOR_ANIMATION
+                translateY: this.state.enableHeaderAnimation
+                  ? this.animatedScrollPositions[
+                      this.state.currentTab
+                    ].interpolate({
+                      inputRange: [
+                        0,
+                        SCROLL_RANGE_FOR_ANIMATION / 2,
+                        SCROLL_RANGE_FOR_ANIMATION
+                      ],
+                      outputRange: [
+                        SCROLL_RANGE_FOR_ANIMATION,
+                        SCROLL_RANGE_FOR_ANIMATION / 4,
+                        0
+                      ],
+                      extrapolate: "clamp"
+                    })
+                  : SCROLL_RANGE_FOR_ANIMATION
               }
             ]
           }

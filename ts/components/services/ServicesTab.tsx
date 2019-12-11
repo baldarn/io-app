@@ -131,6 +131,19 @@ class ServicesTab extends React.PureComponent<Props> {
     }
   }
 
+  public componentDidUpdate(prevProps: Props) {
+    if (
+      // Show only the refresh control and not show activity indicator
+      prevProps.sections.length === 0 &&
+      this.props.sections.length > 0 &&
+      this.props.setButtonUpdating &&
+      this.props.setUpdating
+    ) {
+      this.props.setButtonUpdating(false);
+      this.props.setUpdating(false);
+    }
+  }
+
   private onSaveAreasOfInterest = (
     selectedFiscalCodes: Option<Set<string>>
   ) => {
