@@ -86,6 +86,7 @@ function organizationContainsText(item: Organization, searchText: string) {
 }
 
 class ServicesTab extends React.PureComponent<Props> {
+  private idTimeoutAnim?: number;
   /**
    * For tab Locals
    */
@@ -124,6 +125,12 @@ class ServicesTab extends React.PureComponent<Props> {
     );
   };
 
+  public componentWillUnmount() {
+    if (this.idTimeoutAnim !== undefined) {
+      clearTimeout(this.idTimeoutAnim);
+    }
+  }
+
   private onSaveAreasOfInterest = (
     selectedFiscalCodes: Option<Set<string>>
   ) => {
@@ -135,7 +142,8 @@ class ServicesTab extends React.PureComponent<Props> {
     }
     this.props.hideModal();
 
-    setTimeout(() => {
+    // tslint:disable-next-line: no-object-mutation
+    this.idTimeoutAnim = setTimeout(() => {
       if (this.props.setUpdating && this.props.setButtonUpdating) {
         this.props.setButtonUpdating(false);
         this.props.setUpdating(false);
@@ -161,7 +169,8 @@ class ServicesTab extends React.PureComponent<Props> {
         updatedAreasOfInterest
       );
     }
-    setTimeout(() => {
+    // tslint:disable-next-line: no-identical-functions no-object-mutation
+    this.idTimeoutAnim = setTimeout(() => {
       if (this.props.setUpdating && this.props.setButtonUpdating) {
         this.props.setButtonUpdating(false);
         this.props.setUpdating(false);
