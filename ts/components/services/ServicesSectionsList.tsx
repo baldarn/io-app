@@ -139,7 +139,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
       ) {
         return (
           <View style={styles.headerContentWrapper}>
-            <Button
+            <ButtonDefaultOpacity
               small={true}
               primary={!this.props.isLongPressEnabled}
               style={styles.button}
@@ -149,7 +149,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
               <Text style={styles.textButton}>
                 {I18n.t("services.areasOfInterest.editButton")}
               </Text>
-            </Button>
+            </ButtonDefaultOpacity>
           </View>
         );
       } else if (this.props.isRefreshing || this.props.isLongPressEnabled) {
@@ -168,7 +168,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
           this.props.selectedOrganizationsFiscalCodes &&
           this.props.selectedOrganizationsFiscalCodes.size > 0 && (
             <View style={styles.headerContentWrapper}>
-              <Button
+              <ButtonDefaultOpacity
                 small={true}
                 primary={!this.props.isLongPressEnabled}
                 style={styles.button}
@@ -178,7 +178,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
                 <Text style={styles.textButton}>
                   {I18n.t("services.areasOfInterest.editButton")}
                 </Text>
-              </Button>
+              </ButtonDefaultOpacity>
             </View>
           )
         );
@@ -188,7 +188,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
         this.props.selectedOrganizationsFiscalCodes &&
         this.props.selectedOrganizationsFiscalCodes.size > 0 && (
           <View style={styles.headerContentWrapper}>
-            <Button
+            <ButtonDefaultOpacity
               small={true}
               primary={!this.props.isLongPressEnabled}
               style={styles.button}
@@ -201,7 +201,7 @@ class ServicesSectionsList extends React.PureComponent<Props> {
               <Text style={styles.textButton}>
                 {I18n.t("services.areasOfInterest.editButton")}
               </Text>
-            </Button>
+            </ButtonDefaultOpacity>
           </View>
         )
       );
